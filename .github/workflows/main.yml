@@ -27,11 +27,11 @@ jobs:
       volumes:
         - ${{ env.CCACHE_DIR }}:${{ env.CCACHE_CONTAINER }}
 
-      env:
-        CCACHE_DIR: ${{ env.CCACHE_CONTAINER }}
-        CCACHE_COMPILERCHECK: ${{ env.CCACHE_COMPILERCHECK }}
-        CCACHE_COMPRESS: ${{ env.CCACHE_COMPRESS }}
-        CCACHE_MAXSIZE: ${{ env.CCACHE_MAXSIZE }}
+      options: |
+        -e CCACHE_DIR=${{ env.CCACHE_CONTAINER }}
+        -e CCACHE_COMPILERCHECK
+        -e CCACHE_COMPRESS
+        -e CCACHE_MAXSIZE
 
     steps:
       # checkout and update submodules

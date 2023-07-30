@@ -17,6 +17,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache Ccache
+        id: ccache
+        uses: actions/cache@v3
+        with:
+          path: /root/.ccache
+          key: ${{ runner.os }}-ccache
+
       # workaround: https://github.com/actions/runner/issues/2033#issuecomment-1204205989
       - name: Set ownership
         run: |

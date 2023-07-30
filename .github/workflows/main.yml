@@ -7,10 +7,32 @@ on:
     branches:
       - main
 
+# Ccache settings inspired from here:
+# https://github.com/strongswan/strongswan/blob/master/.github/workflows/tkm.yml
+env:
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_CONTAINER: /root/.ccache
+  CCACHE_COMPILERCHECK: content
+  CCACHE_COMPRESS: true
+  CCACHE_MAXSIZE: 200M
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: espressif/idf:release-v5.1
+    container:
+      image: espressif/idf:release-v5.1
+
+      # mount ccache dir from outside the container, so cache save + restore
+      # works
+      volumes:
+        - ${{ env.CCACHE_DIR }}:${{ env.CCACHE_CONTAINER }}
+
+      env:
+        CCACHE_DIR: ${{ env.CCACHE_CONTAINER }}
+        CCACHE_COMPILERCHECK: ${{ env.CCACHE_COMPILERCHECK }}
+        CCACHE_COMPRESS: ${{ env.CCACHE_COMPRESS }}
+        CCACHE_MAXSIZE: ${{ env.CCACHE_MAXSIZE }}
+
     steps:
       # checkout and update submodules
       - uses: actions/checkout@v3
@@ -21,8 +43,10 @@ jobs:
         id: ccache
         uses: actions/cache@v3
         with:
-          path: /root/.ccache
-          key: ${{ runner.os }}-ccache
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
 
       # workaround: https://github.com/actions/runner/issues/2033#issuecomment-1204205989
       - name: Set ownership

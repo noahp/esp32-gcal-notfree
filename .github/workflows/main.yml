@@ -1,0 +1,25 @@
+# Build on push to main and PRs
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: espressif/idf:release-v5.1
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          # set memfault project key from github secret
+          echo "CONFIG_MEMFAULT_PROJECT_KEY=\"${{ secrets.MEMFAULT_PROJECT_KEY }}\"" >> sdkconfig.defaults
+          # create a build id using calver + git short rev
+          echo "CONFIG_MEMFAULT_ESP32_MAIN_BUILD_ID=\"$(date -u +'%Y.%m.%d')+$(git rev-parse --short HEAD)\"" >> sdkconfig.defaults
+          echo CONFIG_MEMFAULT_ESP32_MAIN_FIRMWARE_VERSION=\"0.0.1\"" >> sdkconfig.defaults
+          idf.py set-target esp32s3
+          idf.py build

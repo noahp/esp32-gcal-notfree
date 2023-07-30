@@ -24,10 +24,8 @@ jobs:
 
       # mount ccache dir from outside the container, so cache save + restore
       # works
-      volumes:
-        - ${{ env.CCACHE_DIR }}:${{ env.CCACHE_CONTAINER }}
-
       options: |
+        --volume ${{ env.CCACHE_DIR }}:${{ env.CCACHE_CONTAINER }}
         -e CCACHE_DIR=${{ env.CCACHE_CONTAINER }}
         -e CCACHE_COMPILERCHECK
         -e CCACHE_COMPRESS

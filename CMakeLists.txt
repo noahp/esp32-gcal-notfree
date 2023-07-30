@@ -15,7 +15,7 @@ if(DEFINED IDF_VERSION_MAJOR)
   endif()
 endif()
 
-get_filename_component(memfault_firmare_sdk_dir ../../../../ ABSOLUTE)
+get_filename_component(memfault_firmare_sdk_dir third-party/memfault-firmware-sdk ABSOLUTE)
 include(${memfault_firmare_sdk_dir}/ports/esp_idf/memfault.cmake)
 
 # NOTE: This include also applies global compiler options, make sure

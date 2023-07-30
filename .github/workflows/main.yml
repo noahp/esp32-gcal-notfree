@@ -26,5 +26,9 @@ jobs:
           echo "CONFIG_MEMFAULT_PROJECT_KEY=\"${{ secrets.MEMFAULT_PROJECT_KEY }}\"" >> sdkconfig.defaults
           # create a build id using calver + git short rev
           echo "CONFIG_MEMFAULT_ESP32_MAIN_FIRMWARE_VERSION=\"$(date -u +'%Y.%m.%d')+$(git rev-parse --short HEAD)\"" >> sdkconfig.defaults
+
+          # activate esp-idf environment
+          source /opt/esp/idf/export.sh
+
           idf.py set-target esp32s3
           idf.py build
